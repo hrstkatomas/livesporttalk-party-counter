@@ -19,31 +19,99 @@ body {
 }
 
 @layer components {
-  .button-dark {
-    background-image: radial-gradient(
-      circle 975px at 2.6% 48.3%,
-      rgba(0, 8, 120, 1) 0%,
-      rgba(95, 184, 224, 1) 99.7%
-    );
+  .button {
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+    color: #fff;
+    border: 3px solid #fff;
+    border-radius: 50px;
+    padding: 0.8rem 2rem;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    transition: 0.1s ease-in-out;
+    letter-spacing: 2px;
+
   }
 
-  .button-light {
-    background-image: linear-gradient(
-      174.2deg,
-      rgba(255, 244, 228, 1) 7.1%,
-      rgba(240, 246, 238, 1) 67.4%
-    );
+  .button:active {
+    transform: scale(0.98);
   }
 
-  .vote-bg {
-    background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  .button:hover .parrot:before {
+    content: "Do it!";
+    width: 70px;
   }
 
-  .vote-bg-own {
-    background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  .parrot {
+    position: absolute;
+    width: 60px;
+    text-align: center;
+    animation: blink 0.8s infinite;
+    color: transparent;
+
   }
 
-  .vote-bg-winning {
-    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+  .parrot:before {
+    content: "Click Me!";
+  }
+
+  .parrot:nth-child(1) {
+    top: -30px;
+    left: -40px;
+    font: 12px/1 "Margarine", sans-serif;
+    transform: rotate(-20deg);
+    animation-duration: 0.5s;
+  }
+
+  .parrot:nth-child(2) {
+    font: 12px/1 "Margarine", sans-serif;
+    right: -40px;
+    top: -20px;
+    transform: rotate(15deg);
+    animation-duration: 0.3s;
+  }
+
+  .parrot:nth-child(3) {
+    font: 16px/1 "Margarine", sans-serif;
+    top: -60px;
+    left: 15px;
+    transform: rotate(10deg);
+    animation-duration: 1s;
+  }
+
+  .parrot:nth-child(4) {
+    font: 18px/1 "Margarine", sans-serif;
+    top: -70px;
+    left: 95px;
+    transform: rotate(2deg);
+    animation-duration: 0.7s;
+  }
+
+  .parrot:nth-child(5) {
+    font: 14px/1 "Margarine", sans-serif;
+    top: 80px;
+    left: 105px;
+    transform: rotate(-20deg);
+    animation-duration: 0.8s;
+  }
+
+  .parrot:nth-child(6) {
+    font: 12px/1 "Margarine", sans-serif;
+    top: 80px;
+    left: 5px;
+    transform: rotate(10deg);
+    animation-duration: 1.2s;
+  }
+}
+
+@keyframes blink {
+  25%,
+  75% {
+    color: transparent;
+  }
+  40%,
+  60% {
+    color: #fff;
   }
 }

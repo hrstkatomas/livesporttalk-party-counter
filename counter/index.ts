@@ -1,30 +1,37 @@
 import type * as Party from "partykit/server";
-import type { Poll } from "@/app/types";
 
 export default class Server implements Party.Server {
+  private count = 0;
+
   constructor(readonly party: Party.Party) {}
 
-  poll: Poll | undefined;
-
   async onStart() {
-    this.poll = await this.party.storage.get<Poll>("poll");
+    this.count = (await this.party.storage.get<number>("count")) || 0;
   }
 
-  private async savePoll() {
-    if (this.poll) {
-      await this.party.storage.put<Poll>("poll", this.poll);
-    }
+  private async saveCount() {
+    await this.party.storage.put<number>("count", this.count);
+
+    // Set an alarm to reset the count after 5 minutes of inactivity.
+    this.party.storage.setAlarm(Date.now() + 5 * 60 * 1000);
+  }
+
+  private resetCount() {
+    this.count = 0;
+    void this.saveCount();
+  }
+
+  onAlarm() {
+    this.resetCount();
   }
 
   async onRequest(req: Party.Request) {
     if (req.method === "POST") {
-      const poll = (await req.json()) as Poll;
-      this.poll = { ...poll, votes: poll.options.map(() => 0) };
-      this.savePoll();
+      this.resetCount();
     }
 
-    if (this.poll) {
-      return new Response(JSON.stringify(this.poll), {
+    if (req.method === "GET") {
+      return new Response(JSON.stringify({ count: this.count }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
@@ -34,16 +41,14 @@ export default class Server implements Party.Server {
   }
 
   async onMessage(message: string) {
-    if (!this.poll) return;
-
     const event = JSON.parse(message);
-    if (event.type === "vote") {
-      this.poll.votes![event.option] += 1;
-      this.party.broadcast(JSON.stringify(this.poll));
-      this.savePoll();
+
+    if (event.type === "increment") {
+      this.count += 1;
+      this.party.broadcast(JSON.stringify({ count: this.count }));
+      void this.saveCount();
     }
   }
-
 }
 
 Server satisfies Party.Worker;
