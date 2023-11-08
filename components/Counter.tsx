@@ -8,13 +8,51 @@ function CurrentCount({ count }: { count: number }) {
   return <div>Updates caused: {count}</div>;
 }
 
+const synonyms = [
+  "Recharging",
+  "Refilling",
+  "Restocking",
+  "Provisioning",
+  "Renewing",
+  "Rethinking life",
+  "U'r doing great",
+  "Keep going",
+  "Enough, init?",
+  "Great job",
+  "Proud of you",
+  "Good work",
+  "You clicked",
+  "You missed, JK!",
+  "Click of the year",
+  "Get a cookie",
+  "Much wow",
+  "What have I done",
+];
+
 function IncrementButton({ onClick }: { onClick: () => void }) {
+  const [recharging, setRecharging] = useState<string | null>(null);
+  const preventOnClick = Boolean(recharging);
+
+  const onClickWithPreventing = () => {
+    if (preventOnClick) return;
+
+    onClick();
+    setRecharging(synonyms[Math.floor(Math.random() * synonyms.length)]);
+    setTimeout(() => setRecharging(null), 1_000);
+  };
+
   return (
-    <button className={"button m-20"} onClick={onClick}>
-      Cause an update!!!
-      {Array.from({ length: 6 }, (v, i) => (
-        <div key={`parrot-${i}`} className={"parrot"} />
-      ))}
+    <button className={"button m-20"} onClick={onClickWithPreventing}>
+      {preventOnClick ? (
+        recharging + "..."
+      ) : (
+        <>
+          Cause an update!!!
+          {Array.from({ length: 6 }, (v, i) => (
+            <div key={`parrot-${i}`} className={"parrot"} />
+          ))}
+        </>
+      )}
     </button>
   );
 }
